@@ -1,0 +1,99 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+ll mod = 100003;
+
+ll n , k;
+ll dp[20][20];
+
+ll binpow(ll n , ll k)
+{
+    ll ans = 1;
+    while(k)
+    {
+        if (k & 1) ans = (ans * n) % mod;
+        n = (n * n) % mod;
+        k >>= 1;
+    }
+    return ans;
+}
+
+void solve1()
+{
+    cout << binpow(3 , k - 1);
+}
+
+struct Matrix
+{
+    ll m[4][4];
+
+    Matrix ()
+    {
+        memset(m , 0 , sizeof(m));
+    }
+
+    Matrix operator * (Matrix other)
+    {
+        Matrix ret;
+        for (int i = 1 ; i <= 3 ; ++i)
+        {
+            for (int j = 1 ; j <= 3 ; ++j)
+            {
+                for (int k = 1 ; k <= 3 ; ++k)
+                {
+                    ret.m[i][j] = (ret.m[i][j] + m[i][k] * other.m[k][j]) % mod;
+                }
+            }
+        }
+        return ret;
+    }
+} base , change;
+
+Matrix binpowMatrix(ll k)
+{
+    Matrix ret = change;
+    while(k)
+    {
+        if (k & 1) ret = ret * change;
+        change = change * change;
+        k >>= 1;
+    }
+    return ret;
+}
+
+void solve2()
+{
+    change.m[1][2] = change.m[2][3] = change.m[3][1] = change.m[3][2] = change.m[3][3] = 1;
+    change.m[1][1] = change.m[1][3] = change.m[2][1] = change.m[2][2] = 0;
+
+    Matrix ans = binpowMatrix(n - k + 1);
+    /*
+    for (int i = 1 ; i <= 3 ; ++i)
+    {
+        for (int j = 1 ; j <= 3 ; ++j)
+        {
+            cout << ans.m[i][j] << " ";
+        }
+        cout << "\n";
+    }
+    */
+    cout << ans.m[3][1];
+
+}
+
+int main()
+{
+    // freopen("2SAT.inp","r",stdin);
+    // freopen("2SAT.out","w",stdout);
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+
+    int type;
+    cin >> type;
+    cin >> n >> k;
+
+    if (type == 1) solve1();
+    else solve2();
+}
